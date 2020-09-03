@@ -1,0 +1,8 @@
+{
+    "name": "优惠券",
+    "abbreviation": "coupon",
+    "describe": "支持创建满减、随机、折扣优惠券",
+    "url": "https://github.com/dspurl/coupon",
+    "download": "",
+    "versions": "0.0.1"
+}
