@@ -7,7 +7,7 @@
 				<swiper-item class="swiper-item" v-for="(item, index) in resources_many" :key="index" @click="showVideo">
 					<view v-if="item.type === 'img'" class="image-wrapper" @click="imgList()"><image :src="item.img" lazy-load class="loaded" mode="aspectFill" lazy-load></image></view>
 					<view v-else class="image-wrapper">
-						<image :src="poster" lazy-load class="loaded" mode="aspectFill" lazy-load></image>
+						<image :src="poster" lazy-load class="loaded" mode="aspectFill"></image>
 					</view>
 					<view v-if="item.type === 'video'" class="playVideo text-white cuIcon-videofill"></view>
 				</swiper-item>
@@ -323,6 +323,10 @@ export default {
 		stopPrevent() {},
 		// 优惠券显示隐藏
 		changeShow(val){
+			if (!this.hasLogin){
+				this.$api.msg('请先登录')
+				return false
+			}
 			this.couponShow = val
 		}
 	},

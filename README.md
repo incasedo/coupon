@@ -14,29 +14,27 @@
 - 支持优惠券提前开始和提前结束
 
 ## 使用说明
-一、 下载coupon最新版
-二、 解压coupon到项目plugin目录下
-三、 登录dshop后台，进入插件列表
-四、 在线安装（请保持dshop的目录结构，如已部署到线上，请在本地测试环境安装，因涉及admin和uni-app，不建议在线安装）
-五、 进入api目录执行数据库迁移使用
+#### 一、 下载coupon最新版
+#### 二、 解压coupon到项目plugin目录下
+#### 三、 登录dshop后台，进入插件列表
+#### 四、 在线安装（请保持dshop的目录结构，如已部署到线上，请在本地测试环境安装，因涉及admin和uni-app，不建议在线安装）
+#### 五、 进入api目录执行数据库迁移使用
 
 ```
 php artisan migrate
 ```
-六、 进入数据库，导入 `coupon/coupon.sql` SQL文件
-七、 进入后台，为管理员分配权限
-八、 uni-app使用coupon插件
-- 可直接将 `example`目录下的文件移动到对应的目录进行替换
-![](/image/1.png)
-![](/image/2.png)
-![](/image/3.png)
-![](/image/4.png)
-![](/image/5.png)
-![](/image/6.png)
-![](/image/7.png)
-![](/image/8.png)
-![](/image/9.png)
-![](/image/10.png)
+#### 六、 进入数据库，导入 `coupon/coupon.sql` SQL文件
+#### 七、 进入后台，为管理员分配权限
+#### 八、 使用优惠券插件，如这是第一个插件，可直接按以下步骤替换目标文件即可，如有其它插件，请根据下图标记进行手动移动代码
+- `coupon/example/admin/Detail.vue`->`admin/src/views/Indent/components/Detail.vue`
+![](/image/23.png)
+- `coupon/example/api/Admin/IndentController.php`->`api/app/Http/Controllers/v1/Admin/IndentController.php`
+![](/image/19.png)
+- `coupon/example/api/Element/GoodIndentController.php`->`api/app/Http/Controllers/v1/Element/GoodIndentController.php`
+![](/image/20.png)
+![](/image/21.png)
+![](/image/22.png)
+- `coupon/example/trade/order/createOrder.vue`->`trade/Dsshop/pages/order/createOrder.vue`
 ![](/image/11.png)
 ![](/image/12.png)
 ![](/image/13.png)
@@ -45,14 +43,23 @@ php artisan migrate
 ![](/image/16.png)
 ![](/image/17.png)
 ![](/image/18.png)
-![](/image/19.png)
-![](/image/20.png)
-![](/image/21.png)
-![](/image/22.png)
-- 手动使用说明：
-1、 通过插件安装后，主要会生成 `coupon`目录（个人中心优惠券列表页）、`components/coupon`目录(领取优惠券和使用优惠券组件)和`api/coupon.js`文件(用于和后端通信的API封装)
-2、 用的时候和正常使用组件一样，没有什么特别的，具体可以参考上面几张图红色标记出来的部分。
-九、 测试创建优惠券、领取优惠券、使用优惠券、退款返还优惠券，如果功能都能正常使用，则说明你的插件安装成功
+- `coupon/example/trade/order/showOrder.vue`->`trade/Dsshop/pages/order/showOrder.vue`
+![](/image/25.png)
+- `coupon/example/trade/product/product.vue`->`trade/Dsshop/pages/product/product.vue`
+![](/image/5.png)
+![](/image/6.png)
+![](/image/7.png)
+![](/image/8.png)
+![](/image/9.png)
+![](/image/10.png)
+- `coupon/example/trade/user/user.vue`->`trade/Dsshop/pages/user/user.vue`
+![](/image/1.png)
+![](/image/2.png)
+![](/image/3.png)
+![](/image/4.png)
+- `coupon/example/api/Models/GoodIndent.php`->`api/app/Models/v1/GoodIndent.php`
+![](/image/24.png)
+#### 九、 测试创建优惠券、领取优惠券、使用优惠券、退款返还优惠券，如果功能都能正常使用，则说明你的插件安装成功
 ## 如何更新插件
 - 首先请备份项目，升级可能产生问题（如自行修改了涉及到升级的文件、下载的文件不全等问题）
 - 首先查看新版本支持的dshop的版本，如果符合，可通过后台直接升级，升级将会自动覆盖原有文件

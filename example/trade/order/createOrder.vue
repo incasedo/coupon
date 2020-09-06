@@ -277,25 +277,27 @@
 						switch(item.coupon.type){
 							case 1:
 							data.type = '满减优惠券'
-							if(item.coupon.cost/100 > couponMoney){
-								couponMoney = item.coupon.cost/100
-								data.price = couponMoney
+							data.price = item.coupon.cost/100
+							if(data.price > couponMoney){
+								couponMoney = data.price
 								couponIndex = index
 							}
+							
 							break
 							case 2:
 							data.type = '随机优惠券'
-							if(item.coupon.cost/100 > couponMoney){
-								couponMoney = item.coupon.cost/100
-								data.price = couponMoney
+							data.price = item.coupon.cost/100
+							if(data.price > couponMoney){
+								couponMoney = data.price
 								couponIndex = index
 							}
+							
 							break
 							case 3:
 							data.type = '折扣优惠券'
-							if(that.total * (item.coupon.cost/10000) > couponMoney){
-								couponMoney = that.total * (item.coupon.cost/10000)
-								data.price = couponMoney
+							data.price = that.total * item.coupon.cost/10000
+							if(data.price > couponMoney){
+								couponMoney = data.price
 								couponIndex = index
 							}
 							break
