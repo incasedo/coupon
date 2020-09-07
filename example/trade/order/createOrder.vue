@@ -44,7 +44,7 @@
 				</view>
 				<text class="cell-tit clamp">优惠券</text>
 				<text class="cell-tip active">
-					选择优惠券
+					{{couponList.length>0 ? couponList[couponIndex].title : '选择优惠券'}}
 				</text>
 				<text class="cell-more wanjia wanjia-gengduo-d"></text>
 			</view>
@@ -274,6 +274,7 @@
 							explain: item.coupon.explain,
 							endTime: item.coupon.endtime.split(' ')[0].replace(/-/g,".")
 						}
+						
 						switch(item.coupon.type){
 							case 1:
 							data.type = '满减优惠券'
