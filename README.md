@@ -59,6 +59,8 @@ php artisan migrate
 ![](/image/4.png)
 - `coupon/example/api/Models/GoodIndent.php`->`api/app/Models/v1/GoodIndent.php`
 ![](/image/24.png)
+- `coupon/example/api/Console/Kernel.php`->`api/app/Console/Kernel.php`
+![](/image/24.png)
 #### 九、 测试创建优惠券、领取优惠券、使用优惠券、退款返还优惠券，如果功能都能正常使用，则说明你的插件安装成功
 ## 如何更新插件
 - 首先请备份项目，升级可能产生问题（如自行修改了涉及到升级的文件、下载的文件不全等问题）
