@@ -5,9 +5,9 @@
 			<view v-if="video" class="showVideoClose" @click.stop="closeVideo">关闭</view>
 			<swiper indicator-dots circular="true" duration="400" v-if="getList.resources_many" @change="imgCtu">
 				<swiper-item class="swiper-item" v-for="(item, index) in resources_many" :key="index" @click="showVideo">
-					<view v-if="item.type === 'img'" class="image-wrapper" @click="imgList()"><image :src="item.img" lazy-load class="loaded" mode="aspectFill" lazy-load></image></view>
+					<view v-if="item.type === 'img'" class="image-wrapper" @click="imgList()"><image :src="item.img" class="loaded" mode="aspectFill" lazy-load></image></view>
 					<view v-else class="image-wrapper">
-						<image :src="poster" lazy-load class="loaded" mode="aspectFill"></image>
+						<image :src="poster" lazy-load class="loaded" mode="aspectFill" lazy-load></image>
 					</view>
 					<view v-if="item.type === 'video'" class="playVideo text-white cuIcon-videofill"></view>
 				</swiper-item>
@@ -103,7 +103,12 @@
 
 		<view class="detail-desc">
 			<view class="d-header"><text>图文详情</text></view>
-			<rich-text :nodes="getList.details | formatRichText"></rich-text>
+			<!-- #ifdef MP-ALIPAY -->
+				<rich-text :nodes="getList.details"></rich-text>
+			<!-- #endif -->
+			<!-- #ifndef MP-ALIPAY -->
+				<rich-text :nodes="getList.details | formatRichText"></rich-text>
+			<!-- #endif -->
 		</view>
 
 		<!-- 底部操作菜单 -->
@@ -209,6 +214,9 @@ export default {
 					})
 				}
 				that.getList = res
+				// #ifdef MP-ALIPAY
+				that.getList.details = that.htmlToImageJson(that.getList.details)
+				// #endif
 				if (that.hasLogin){
 					that.browse()
 				}
@@ -321,6 +329,28 @@ export default {
 			this.specificationDefaultDisplay = data;
 		},
 		stopPrevent() {},
+		// HTML转Json图片
+		htmlToImageJson(html) {
+			let img = html.match(/<img[^>]*>/gi)
+			let arr = []
+			if(img){
+				for (let i = 0; i < img.length; i++) {
+				 let src = img[i].match(/src=[\'\"]?([^\'\"]*)[\'\"]?/i)
+				 //获取图片地址
+				 if(src[1]){
+					arr.push({
+						name: 'img',
+						attrs: {
+							style: 'max-width:100%;height:auto;display:inline-block;margin:10rpx auto;vertical-align:top;margin-top:-4px',
+							src: src[1]
+						}
+				  })
+				 }
+				}
+			}
+			return arr
+		},
+
 		// 优惠券显示隐藏
 		changeShow(val){
 			if (!this.hasLogin){
@@ -354,7 +384,7 @@ export default {
 					return match;
 				});
 				newContent = newContent.replace(/<br[^>]*\/>/gi, '');
-				newContent = newContent.replace(/\<img/gi, '<img style="max-width:100%;height:auto;display:inline-block;margin:10rpx auto;"');
+				newContent = newContent.replace(/\<img/gi, '<img style="vertical-align:top;max-width:100%;height:auto;display:inline-block;margin:10rpx auto;"');
 				return newContent;
 			}
 		}
@@ -398,7 +428,7 @@ page {
 /* 标题简介 */
 .introduce-section {
 	background: #fff;
-	padding: 20upx 30upx;
+	padding: 40upx 30upx;
 
 	.title {
 		font-size: 32upx;
