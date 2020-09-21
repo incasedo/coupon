@@ -8,6 +8,7 @@ use App\Models\v1\GoodIndent;
 use App\Models\v1\GoodIndentCommodity;
 use App\Models\v1\MoneyLog;
 use App\Models\v1\User;
+use App\Notifications\InvoicePaid;
 use App\Models\v1\UserCoupon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -52,6 +53,7 @@ class IndentController extends Controller
 
     // 发货
     public function shipment(Request $request){
+        $return=DB::transaction(function ()use($request){
         $GoodIndent=GoodIndent::with(['User'])->find($request->id);
         $GoodIndent->dhl_id = $request->dhl_id;
         $GoodIndent->odd = $request->odd;
@@ -85,8 +87,42 @@ class IndentController extends Controller
                 ]
             ],
         ];
-        $app->subscribe_message->send($data);
-        return resReturn(1,'发货成功');
+//            $app->subscribe_message->send($data);
+        // 通知
+        $invoice=[
+            'type'=> InvoicePaid::NOTIFICATION_TYPE_SYSTEM_MESSAGES,
+            'title'=>'您购买的商品已发货，请到订单详情查看',
+            'list'=>[
+                [
+                    'keyword'=>'订单编号',
+                    'data'=>$GoodIndent->identification
+                ],
+                [
+                    'keyword'=>'物流公司',
+                    'data'=>$Dhl->name
+                ],
+                [
+                    'keyword'=>'快递单号',
+                    'data'=>$request->odd
+                ],
+                [
+                    'keyword'=>'发货时间',
+                    'data'=> Carbon::now()->toDateTimeString()
+                ]
+            ],
+            'remark'=>'感谢您的支持。',
+            'url'=>'/pages/order/showOrder?id='.$GoodIndent->id,
+            'prefers'=>['database']
+        ];
+        $user = User::find($GoodIndent->User->id);
+        $user->notify(new InvoicePaid($invoice));
+        return array(1,'发货成功');
+    });
+    if($return[0] == 1){
+        return resReturn(1,$return[1]);
+    }else{
+        return resReturn(0,$return[0],$return[1]);
+    }
     }
     // 退款
     public function refund($id,Request $request){
@@ -106,7 +142,7 @@ class IndentController extends Controller
         $lock=RedisLock::lock($redis,'goodRefund');
         if($lock){
             $return=DB::transaction(function ()use($request,$id){
-                $GoodIndent=GoodIndent::with(['GoodIndentUser'])->find($id);
+                $GoodIndent=GoodIndent::find($id);
                 $GoodIndent->refund_money = $request->refund_money;
                 $GoodIndent->refund_way = $request->refund_way;
                 $GoodIndent->refund_reason = $request->refund_reason;
@@ -121,6 +157,21 @@ class IndentController extends Controller
                     $Money->money = $GoodIndent->refund_money;
                     $Money->remark = '订单：'.$GoodIndent->identification.'的退款';
                     $Money->save();
+                    // 通知
+                    $invoice=collect([]);
+                    $invoice->type = InvoicePaid::NOTIFICATION_TYPE_DEAL;
+                    $invoice->title = '对订单：'.$GoodIndent->identification.'的退款';
+                    $invoice->list = [
+                        [
+                            'keyword'=>'支付方式',
+                            'data'=>'余额支付'
+                        ]
+                    ];
+                    $invoice->price = $GoodIndent->refund_money;
+                    $invoice->url ='pages/finance/bill_show?id='.$Money->id;
+                    $invoice->prefers = ['database'];
+                    $user = User::find(auth('web')->user()->id);
+                    $user->notify(new InvoicePaid($invoice));
                 }
                 //优惠券退还
                 if($GoodIndent->GoodIndentUser){
