@@ -200,7 +200,7 @@
 </style>
 
 <script>
-import { getList, setDelete, createSubmit, updateSubmit } from '@/api/Coupon'
+import { getList, setDelete, createSubmit, updateSubmit } from '@/api/coupon'
 import Pagination from '@/components/Pagination'
 
 export default {
