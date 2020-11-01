@@ -4,7 +4,7 @@
 		<view class="address-section" @click="addAddress()">
 			<view class="order-content">
 				<text class="yticon icon-shouhuodizhi"></text>
-				<view class="cen" v-if="addressData">
+				<view class="cen" v-if="addressData.location">
 					<view class="top">
 						<text class="name">{{addressData.name}}</text>
 						<text class="mobile">{{addressData.cellphone}}</text>
@@ -120,6 +120,7 @@
 <script>
 	import Address from '../../api/address'
 	import Indents from '../../api/indents'
+	import {mapMutations} from 'vuex'
 	import UserCouponApi from '../../api/userCoupon';
 	export default {
 		data() {
@@ -151,9 +152,11 @@
 			}
 		},
 		onLoad(option){
+			this.loginCheck()
 			this.loadData()
 		},
 		methods: {
+			...mapMutations(['loginCheck']),
 			//商品数据
 			async loadData(){
 				this.cartList = []
@@ -194,11 +197,9 @@
 			getOne(){
 				const that = this
 				Address.getOne(this.order, function(res){
-					if(res.shipping){
-						that.addressData = res.shipping
-						that.carriage = res.carriage ? res.carriage : 0
-						that.outPocketTotal() //实付金额
-					}
+					that.addressData = res.shipping
+					that.carriage = res.carriage ? res.carriage : 0
+					that.outPocketTotal() //实付金额
 				})
 			},
 			//显示优惠券面板
@@ -217,7 +218,7 @@
 				this.payType = type;
 			},
 			submit(){
-				if(!this.addressData){
+				if(!this.addressData.location){
 					this.$api.msg('请选择地址')
 					return false
 				}

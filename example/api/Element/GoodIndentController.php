@@ -86,7 +86,7 @@ class GoodIndentController extends Controller
                     $total+=$indentCommodity['number']*$indentCommodity['price'];
                 }
                 $GoodIndent->identification = orderNumber();
-
+                $GoodIndent->total = $total + $request->carriage;
                 $GoodIndent->remark = $request->remark;
                 $couponMoney=0;
                 if($request->user_coupon_id){   //使用了优惠券
@@ -135,7 +135,6 @@ class GoodIndentController extends Controller
                 $GoodLocation->longitude = $request->address['longitude'];
                 $GoodLocation->house = $request->address['house'];
                 $GoodLocation->save();
-
                 return array(1,$GoodIndent->id);
             }, 5);
             RedisLock::unlock($redis,'goodIndent');
